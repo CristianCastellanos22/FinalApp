@@ -1,7 +1,8 @@
-package com.cristian.finalapp
+package com.cristian.finalapp.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.cristian.finalapp.R
 
 class LoginActivity : AppCompatActivity() {
 
