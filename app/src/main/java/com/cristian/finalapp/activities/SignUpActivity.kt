@@ -3,9 +3,7 @@ package com.cristian.finalapp.activities
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.cristian.finalapp.R
-import com.cristian.finalapp.goToActivity
-import com.cristian.finalapp.toast
+import com.cristian.finalapp.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.editTextEmail
 import kotlinx.android.synthetic.main.activity_login.editTextPassword
@@ -28,13 +26,27 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         buttonSingUp.setOnClickListener {
-            val email = editTextEmail.text.toString()
-            val password = editTextPassword.text.toString()
-            if (isValidEmailAndPassword(email, password)) {
+            val email = editTextEmailSign.text.toString()
+            val password = editTextPasswordSign.text.toString()
+            val confirmPassword = editTextConfirmPassword.text.toString()
+            if (isValidEmail(email) && isValidPassword(password) && isValidConfirmPassword(password, confirmPassword)) {
                 singUpByEmail(email, password)
             } else {
                 toast("Please fill all the data and confirm password is correct.")
             }
+        }
+
+        editTextEmailSign.validate {
+            editTextEmailSign.error = if (isValidEmail(it)) null else "Emial is not valid"
+        }
+
+        editTextPasswordSign.validate {
+            editTextPasswordSign.error = if (isValidPassword(it)) null else "Password should " +
+                    "contain 1 lowercase, 1 uppercase, 1 number, 1 special character and 4 characters length at least."
+        }
+
+        editTextConfirmPassword.validate {
+            editTextConfirmPassword.error = if (isValidConfirmPassword(editTextPasswordSign.text.toString(), it)) null else "Confirm password does not match with"
         }
     }
 
@@ -53,8 +65,4 @@ class SignUpActivity : AppCompatActivity() {
             }
     }
 
-    private fun isValidEmailAndPassword(email: String, password: String): Boolean {
-        return !email.isNullOrEmpty() && !password.isNullOrEmpty() &&
-                password == editTextConfirmPassword.text.toString()
-    }
 }

@@ -2,9 +2,7 @@ package com.cristian.finalapp.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.cristian.finalapp.R
-import com.cristian.finalapp.goToActivity
-import com.cristian.finalapp.toast
+import com.cristian.finalapp.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -19,8 +17,10 @@ class LoginActivity : AppCompatActivity() {
         buttonLogin.setOnClickListener {
             val email = editTextEmail.text.toString()
             val password = editTextPassword.text.toString()
-            if (isValidEmailAndPassword(email, password)) {
+            if (isValidEmail(email) && isValidPassword(password)) {
                 logInByEmail(email, password)
+            } else {
+                toast("Please fill all the data and confirm password is correct.")
             }
         }
 
@@ -34,19 +34,28 @@ class LoginActivity : AppCompatActivity() {
             overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
         }
 
+        editTextEmail.validate {
+            editTextEmail.error = if (isValidEmail(it)) null else "Emial is not valid"
+        }
+
+        editTextPassword.validate {
+            editTextPassword.error = if (isValidPassword(it)) null else "Password should " +
+                    "contain 1 lowercase, 1 uppercase, 1 number, 1 special character and 4 characters length at least."
+        }
+
     }
 
     private fun logInByEmail (email: String, password:String) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 toast("User is now logged in.")
+                val currentUser = mAuth.currentUser!!
+                currentUser.displayName
+                currentUser.email
             } else {
                 toast("An unexpected error occurred, please try again.")
             }
         }
     }
 
-    private fun isValidEmailAndPassword(email: String, password: String): Boolean {
-        return !email.isNullOrEmpty() && !password.isNullOrEmpty()
-    }
 }
